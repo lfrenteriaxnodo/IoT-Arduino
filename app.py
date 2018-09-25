@@ -2,7 +2,7 @@ import time
 import http.server
 
 
-HOST_NAME = 'example.net' # !!!REMEMBER TO CHANGE THIS!!!
+HOST_NAME = '0.0.0.0' # !!!REMEMBER TO CHANGE THIS!!!
 PORT_NUMBER = 5000 # Maybe set this to 9000.
 
 
