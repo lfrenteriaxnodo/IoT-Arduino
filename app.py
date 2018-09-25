@@ -1,9 +1,10 @@
 import time
 import http.server
-
+import os
+port = int(os.environ.get("PORT", 5000))
 
 HOST_NAME = '0.0.0.0' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 5000 # Maybe set this to 9000.
+PORT_NUMBER = port
 
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
