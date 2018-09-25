@@ -1,36 +1,56 @@
-import time
-import http.server
+
 import os
 port = int(os.environ.get("PORT", 5000))
 
-HOST_NAME = '0.0.0.0' # !!!REMEMBER TO CHANGE THIS!!!
+import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+HOST_NAME = '0.0.0.0'
 PORT_NUMBER = port
 
 
-class MyHandler(http.server.BaseHTTPRequestHandler):
-    def do_HEAD(s):
-        s.send_response(200)
-        s.send_header("Content-type", "text/html")
-        s.end_headers()
-    def do_GET(s):
-        """Respond to a GET request."""
-        s.send_response(200)
-        s.send_header("Content-type", "text/html")
-        s.end_headers()
-        s.wfile.write("<html><head><title>Title goes here.</title></head>".decode('utf8'))
-        s.wfile.write("<body><p>This is a test.</p>".decode('utf8'))
-        # If someone went to "http://something.somewhere.net/foo/bar/",
-        # then s.path equals "/foo/bar/".
-        s.wfile.write("<p>You accessed path: %s</p>".decode('utf8') % s.path)
-        s.wfile.write("</body></html>".decode('utf8'))
+class MyHandler(BaseHTTPRequestHandler):
+    def do_HEAD(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
+    def do_GET(self):
+        paths = {
+            '/foo': {'status': 200},
+            '/bar': {'status': 302},
+            '/baz': {'status': 404},
+            '/qux': {'status': 500}
+        }
+
+        if self.path in paths:
+            self.respond(paths[self.path])
+        else:
+            self.respond({'status': 500})
+
+    def handle_http(self, status_code, path):
+        self.send_response(status_code)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        content = '''
+        <html><head><title>Title goes here.</title></head>
+        <body><p>This is a test.</p>
+        <p>You accessed path: {}</p>
+        </body></html>
+        '''.format(path)
+        return bytes(content, 'UTF-8')
+
+    def respond(self, opts):
+        response = self.handle_http(opts['status'], self.path)
+        self.wfile.write(response)
 
 if __name__ == '__main__':
-    server_class = http.server.HTTPServer
+    server_class = HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-    print (time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER))
+    print(time.asctime(), 'Server Starts - %s:%s' % (HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
-    print (time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER))
+    print(time.asctime(), 'Server Stops - %s:%s' % (HOST_NAME, PORT_NUMBER))
