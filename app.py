@@ -25,8 +25,6 @@ class MyHandler(BaseHTTPRequestHandler):
         }
         if "?" in self.path:
             data=dict(parse_qs(self.path.split("?")[1], True))
-            for key,value in dict(parse_qs(self.path.split("?")[1], True)).items():
-                print (key + " = " + value)
             print ('data',data)
             print ('mydata', mydata)
             myTime=time.asctime()
