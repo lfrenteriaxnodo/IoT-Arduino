@@ -2,6 +2,7 @@
 import os
 port = int(os.environ.get("PORT", 5000))
 from urllib.parse import urlparse
+from urllib.parse import parse_qs
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -24,7 +25,7 @@ class MyHandler(BaseHTTPRequestHandler):
         }
         if "?" in self.path:
             data=dict(urlparse.parse_qsl(self.path.split("?")[1], True))
-            for key,value in dict(urlparse.parse_qsl(self.path.split("?")[1], True)).items():
+            for key,value in dict(parse_qsl(self.path.split("?")[1], True)).items():
                 print (key + " = " + value)
             print ('data',data)
             print ('mydata', mydata)
