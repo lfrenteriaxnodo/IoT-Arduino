@@ -24,8 +24,8 @@ class MyHandler(BaseHTTPRequestHandler):
             '/qux': {'status': 500}
         }
         if "?" in self.path:
-            data=dict(parse_qsl(self.path.split("?")[1], True))
-            for key,value in dict(parse_qsl(self.path.split("?")[1], True)).items():
+            data=dict(parse_qs(self.path.split("?")[1], True))
+            for key,value in dict(parse_qs(self.path.split("?")[1], True)).items():
                 print (key + " = " + value)
             print ('data',data)
             print ('mydata', mydata)
