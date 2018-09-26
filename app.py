@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 HOST_NAME = '0.0.0.0'
 PORT_NUMBER = port
 
-
+mydata={'sensorValue':'none','time':'none'}
 class MyHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
@@ -22,6 +22,15 @@ class MyHandler(BaseHTTPRequestHandler):
             '/baz': {'status': 404},
             '/qux': {'status': 500}
         }
+        if "?" in self.path:
+            data=dict(urlparse.parse_qsl(self.path.split("?")[1], True))
+            for key,value in dict(urlparse.parse_qsl(self.path.split("?")[1], True)).items():
+                print (key + " = " + value)
+            print ('data',data)
+            print ('mydata', mydata)
+            myTime=time.asctime()
+            mydata['time']=myTime
+            mydata['sensorValue']=data['sensorValue']
 
         if self.path in paths:
             self.respond(paths[self.path])
@@ -36,8 +45,9 @@ class MyHandler(BaseHTTPRequestHandler):
         <html><head><title>Title goes here.</title></head>
         <body><p>This is a test.</p>
         <p>You accessed path: {}</p>
+        <p>Sensor value: {}</p>
         </body></html>
-        '''.format(path)
+        '''.format(path,mydata['sensorValue'])
         return bytes(content, 'UTF-8')
 
     def respond(self, opts):
